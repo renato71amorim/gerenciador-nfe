@@ -1,0 +1,11 @@
+{
+  "require": {
+    "gabordemooij/redbean": "^5.1",
+    "php-mime-mail-parser/php-mime-mail-parser": "^2.11"
+  },
+  "autoload": {
+    "psr-4": {
+      "Uspdev\\Popper\\": "src"
+    }
+  }
+}
