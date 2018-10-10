@@ -1,6 +1,6 @@
 .idea
 config.php
-log
+log/*.log
 sandbox/
 phpdocs/
 composer.phar
