@@ -9,34 +9,23 @@ O sistema monitora uma caixa de postal de e-mail para onde são enviadas as nota
 ## Email popper
 
 Este projeto conecta num servidor pop de email (gmail), baixa todos e guarda em banco de dados.\
-Depois verifica os emails baixados procurando anexos e verifica se algum é nfe (xml) 
-guardando no banco também.
+Depois verifica os emails baixados procurando anexos e verifica se algum é nfe (xml) guardando no banco também.
 
-A verificação do nfe é feita consultando o nfe-ws (http://github.com/uspdev/nfe-ws). 
-Como o nfe-ws valida o xml e consulta o protocolo na sefaz, ele já guarda essas informações junto ao email.
+A verificação do anexo para saber se é nfe é feita consultando um webservice externo (github.com/uspdev/nfe-ws).
+
+Como o nfe-ws valida o xml e consulta o protocolo na sefaz, ele já guarda essas informações junto ao xml no banco de dados.
+
+Para o usuário o objetivo (não implementado ainda) é ter uma interface com a listagem das nfes contendo os dados básicos como emitente, data, número da NFE, etc. Também a situação da NFE (ok, cancelada, etc). Poderá baixar a DANFE, o XML ou o protocolo de situação (gerado pelo nfe-ws).
+
+O sistema permite receber emails de diversas unidades e classificar adequadamente criando espaços de usuários distintos para cada um.
 
 ## Instalação
 
-Primeiro tem de instalar o pecl-mailparse.
+É necessário ter o webservice nfe-ws funcional para essa aplicação funcionar adequadamente!
 
-O instalador padrão não funciona por um bug (5/2018)
+Versão do PHP
 
-Se for Ubuntu 16.04, rode os comandos abaixo numa pasta vazia:
-
-    pecl download mailparse
-    tar -xvf mailparse-3.0.2.tgz
-    cd mailparse-3.0.2/
-    phpize
-    ./configure
-    sed -i 's/#if\s!HAVE_MBSTRING/#ifndef MBFL_MBFILTER_H/' ./mailparse.c
-    make
-    sudo mv modules/mailparse.so /usr/lib/php/20151012/
-
-Para outras distros tem de ver a pasta de destino de 'libs' do php
-
-Reinicie o apache
-    
-    service apache2 restart
+* Testado no PHP 7.0.32 (ubuntu 16.04) e no PHP 7.2 (ubuntu 18.04)
 
 Instale as dependencias do composer.
 
@@ -45,9 +34,6 @@ Instale as dependencias do composer.
 Crie o arquivo config.php a partir do config.sample.php e ajuste o necessário.
     
     cp config.sample.php config.php
-    
-    
-## Utilização
 
 Em princípio foi estruturado para baixar via cron do sistema, por meio de:
 
@@ -55,9 +41,16 @@ Em princípio foi estruturado para baixar via cron do sistema, por meio de:
     
 Colocar o cron com intervalo de 1h é razoável.
 
-O cron acessa uma url ('www/index.php') que executa todas as tarefas.
+A pasta www/ necessita estar configurado no apache para ser acessado publicamente.
 
-Portanto www/ necessita estar configurado no apache para ser acessado publicamente.
+## Interface de administração
 
-Acessando a url diretamente pelo navegador também dispara o processo.
+Deverá conter os emails baixados e elementos para verificar possíveis problemas.
 
+Deverá permitir cadastrar as unidades que irão utilizar esse sistema, incluindo um administrador local da unidade e o email que enviará as nfes ao sistema.
+
+## Interface do usuário
+
+O administrador cadastrado inicialmente poderá adicionar os usuários e outros administradores no sistema.
+
+Os usuários entrarão de cara na listagem de notas fiscais emitidas contra a unidade ou as que foram enviadas ao email cadastrado na unidade.
