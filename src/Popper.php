@@ -218,9 +218,22 @@ class Popper
         return R::store($email);
     }
 
-    public function getAll($limit = 500)
+    /**
+     * getAll
+     * Retorna todos os emails limitados a $limit. Não retorna o raw_body pois irá exaurir a memória.
+     * 
+     * @param  int $offset
+     * @param  int $limit
+     *
+     * @return array Array do BD com os emails
+     */
+    public function getAll($offset = 0, $limit = 1000)
     {
-        return R::findAll('nfeemail', ' LIMIT ' . $limit);
+        //return R::findAll('nfeemail', ' LIMIT ' . $limit);
+        //return R::find('nfeemail','ORDER BY id DESC LIMIT '.$limit.' OFFSET '.$offset.' ;');
+        return R::getAll('SELECT id, unidade, data, ano, assunto, remet, status, raw_header FROM nfeemail  ORDER BY id DESC LIMIT '.$limit.' OFFSET '.$offset.' ;');
+        
+        //[':limit' => $limit, ':offset' => $offset]);
     }
 
     /**
@@ -260,8 +273,8 @@ class Popper
 
     /**
      * getAnexos
-     * Dado um objeto $email, este método extrai os anexos e retorna um array com os dados. 
-     * 
+     * Dado um objeto $email, este método extrai os anexos e retorna um array com os dados.
+     *
      * @param object $email É um objeto do banco de dados
      *
      * @return array Array contendo os dados dos anexos encontrados. Se não houver anexos o array será vazio.
