@@ -1,6 +1,7 @@
 .idea
 config.php
 log
-vendor/
 sandbox/
 phpdocs/
+composer.phar
+/vendor/

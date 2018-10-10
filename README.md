@@ -60,3 +60,4 @@ O cron acessa uma url ('www/index.php') que executa todas as tarefas.
 Portanto www/ necessita estar configurado no apache para ser acessado publicamente.
 
 Acessando a url diretamente pelo navegador também dispara o processo.
+
