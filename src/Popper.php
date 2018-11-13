@@ -15,6 +15,8 @@ class Popper
     }
 
     /**
+     * getUnidade 
+     * 
      * Retorna a unidade USP associada ao email de nfe
      *
      * Regra:
