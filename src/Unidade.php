@@ -3,10 +3,6 @@ namespace Uspdev\Popper;
 
 class Unidade
 {
-    public function __construct()
-    {
-    }
-
     /**
      * getUnidades
      *
