@@ -6,6 +6,13 @@ class Nfes
 {
 
 
+    /**
+     * consulta_sefaz
+     *
+     * @param  string $xml NFE no formato XML
+     *
+     * @return Array Array contendo o retorno do webservice de consulta à sefaz
+     */
     public function consulta_sefaz($xml)
     {
         // configuração do NFE-WS está em $this->>nfews
@@ -35,8 +42,15 @@ class Nfes
     }
 
     /*
-     * Verifica se um anexo é nfe ou não
-     * $anexo é um objeto de PhpMimeMailParser\Parser;
+
+     */
+    /**
+     * verificaNfe Verifica se um anexo é nfe ou não
+     * 
+     * @param  object $anexo objeto de PhpMimeMailParser\Parser
+     *
+     * @return mixed Se for nfe retorna os dados de consulta à sefaz, 
+     *               se não retorna false
      */
     public function verificaNfe($anexo)
     {
@@ -52,6 +66,15 @@ class Nfes
         return false;
     }
 
+    /**
+     * salvaNfe Salva um xml de nfe no banco de dados
+     *
+     * @param  array $sefaz Retorno da colsulta à sefaz
+     * @param  object $email Objeto do email associado à nfe
+     *
+     * @return string retorna 'existente' se já existe no BD e atualizou
+     *                retorna 'novo' se adicionado ao bd
+     */
     public function salvaNfe($sefaz, $email)
     {
         $prot = $sefaz['sefaz'];
