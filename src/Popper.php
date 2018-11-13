@@ -29,14 +29,6 @@ class Popper
      */
     public function getUnidade($header)
     {
-        $unidades = [];
-        $unidades[0]['sigla'] = 'EESC';
-        $unidades[0]['email_nfe'] = 'nfe@eesc.usp.br';
-
-        $unidades[1]['sigla'] = 'FO';
-        $unidades[1]['email_nfe'] = 'nfe.fo@usp.br';
-
-
         // verifica pelo from
         $from = $header->from[0]->mailbox . '@' . $header->from[0]->host;
         if ($unidade = Unidade::getUnidadeByEmailNfe($from)) {
@@ -68,24 +60,6 @@ class Popper
             }
         }
 
-        foreach ($unidades as $unidade) {
-            // primeiro verifica o from
-            if ($unidade['email_nfe'] == $from) {
-                return $unidade['sigla'];
-            }
-            // depois verifica o subject
-            if (strpos(iconv_mime_decode($header->subject, 0, 'UTF-8'), $unidade['email_nfe']) !== false) {
-                return $unidade['sigla'];
-            }
-            // vamos verificar o to
-            if (in_array($unidade['email_nfe'], $to)) {
-                return $unidade['sigla'];
-            }
-            // vamos verificar o cc
-            if (in_array($unidade['email_nfe'], $cc)) {
-                return $unidade['sigla'];
-            }
-        }
         return 'NONE';
     }
 
