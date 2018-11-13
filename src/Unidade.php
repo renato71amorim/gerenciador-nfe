@@ -7,6 +7,11 @@ class Unidade
     {
     }
 
+    /**
+     * getUnidades
+     *
+     * @return array Contendo todas as unidades
+     */
     public static function getUnidades()
     {
         $unidades = [];
@@ -20,6 +25,14 @@ class Unidade
 
     }
 
+    
+    /**
+     * getUnidadeByEmailNfe
+     *
+     * @param  mixed $email
+     *
+     * @return varchar Sigla da unidade procurada ou false se não encontrar
+     */
     public function getUnidadeByEmailNfe($email)
     {
         $unidades = Unidade::getUnidades();
