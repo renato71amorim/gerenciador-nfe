@@ -36,15 +36,36 @@ class Popper
         $unidades[1]['sigla'] = 'FO';
         $unidades[1]['email_nfe'] = 'nfe.fo@usp.br';
 
+
+        // verifica pelo from
         $from = $header->from[0]->mailbox . '@' . $header->from[0]->host;
-        $to = [];
-        foreach ($header->to as $src) {
-            $to[] = strtolower($src->mailbox . '@' . $src->host);
+        if ($unidade = Unidade::getUnidadeByEmailNfe($from)) {
+            return $unidade;
         }
 
-        $cc = [];
+        // depois verifica o subject
+        $subject = iconv_mime_decode($header->subject, 0, 'UTF-8');
+        preg_match('/\b[^\s]+@[^\s]+/', $subject, $email_candidate);
+        if ($email = filter_var($email_candidate,FILTER_VALIDATE_EMAIL)){
+            if ($unidade = Unidade::getUnidadeByEmailNfe($email)) {
+                return $unidade;
+            }
+        }
+
+        // pelo To
+        foreach ($header->to as $src) {
+            $to = strtolower($src->mailbox . '@' . $src->host);
+            if ($unidade = Unidade::getUnidadeByEmailNfe($to)) {
+                return $unidade;
+            }
+        }
+        
+        // pelo CC
         foreach ($header->cc as $src) {
-            $cc[] = strtolower($src->mailbox . '@' . $src->host);
+            $cc = strtolower($src->mailbox . '@' . $src->host);
+            if ($unidade = Unidade::getUnidadeByEmailNfe($cc)) {
+                return $unidade;
+            }
         }
 
         foreach ($unidades as $unidade) {
@@ -221,7 +242,7 @@ class Popper
     /**
      * getAll
      * Retorna todos os emails limitados a $limit. Não retorna o raw_body pois irá exaurir a memória.
-     * 
+     *
      * @param  int $offset
      * @param  int $limit
      *
@@ -231,8 +252,8 @@ class Popper
     {
         //return R::findAll('nfeemail', ' LIMIT ' . $limit);
         //return R::find('nfeemail','ORDER BY id DESC LIMIT '.$limit.' OFFSET '.$offset.' ;');
-        return R::getAll('SELECT id, unidade, data, ano, assunto, remet, status, raw_header FROM nfeemail  ORDER BY id DESC LIMIT '.$limit.' OFFSET '.$offset.' ;');
-        
+        return R::getAll('SELECT id, unidade, data, ano, assunto, remet, status, raw_header FROM nfeemail  ORDER BY id DESC LIMIT ' . $limit . ' OFFSET ' . $offset . ' ;');
+
         //[':limit' => $limit, ':offset' => $offset]);
     }
 
