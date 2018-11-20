@@ -2,62 +2,36 @@
 
 namespace Uspdev\Popper;
 
-class Nfes
+use \RedBeanPHP\R as R;
+
+class Nfe
 {
 
+    protected $sefaz;
 
-    /**
-     * consulta_sefaz
-     *
-     * @param  string $xml NFE no formato XML
-     *
-     * @return Array Array contendo o retorno do webservice de consulta à sefaz
-     */
-    public function consulta_sefaz($xml)
+    public function __construct($cfg)
     {
-        // configuração do NFE-WS está em $this->>nfews
-        // nao iremos verificar o $xml
-
-        //echo $this->nfews['srv'] . 'xml';
-        $curl = curl_init($this->nfews['srv'] . 'xml');
-        $content = 'xml=' . curl_escape($curl, $xml);
-
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_USERPWD, $this->nfews['usr'] . ":" . $this->nfews['pwd']);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/x-www-form-urlencoded; charset=UTF-8"));
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
-
-        $json_response = curl_exec($curl);
-
-        // o status serve para ajudar a debugar erros
-        //$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-        curl_close($curl);
-
-        $response = json_decode($json_response, true);
-        return $response;
+        $this->nfews = $cfg['nfews'];
+        $this->logfile = $cfg['logfile'];
     }
 
-    /*
+    public function setSefaz($sefaz)
+    {
+        $this->sefaz = $sefaz;
+    }
 
-     */
     /**
      * verificaNfe Verifica se um anexo é nfe ou não
-     * 
-     * @param  object $anexo objeto de PhpMimeMailParser\Parser
      *
-     * @return mixed Se for nfe retorna os dados de consulta à sefaz, 
+     * @param  string $xml Contém o candidato ao xml nfe
+     *
+     * @return mixed Se for nfe retorna os dados de consulta à sefaz,
      *               se não retorna false
      */
-    public function verificaNfe($anexo)
+    public function isNfe($xml)
     {
-        $arq_xml = $anexo->getContent();
-        //echo $arq_xml;
-        $sefaz = Nfes::consulta_sefaz($arq_xml);
-        //print_r($sefaz);
+        $sefaz = $this->sefaz->consultaXML($xml);
+
         if ($sefaz['status'] == 'ok') { // sim é uma nfe
             $ret['sefaz'] = $sefaz;
             $ret['xml'] = $arq_xml;
@@ -84,7 +58,7 @@ class Nfes
         // se a nfe já existir vamos atualizar os dados pois
         // pode ser que o xml anterior estava com problemas.
         //  Se o novo estiver ruim então lascou-se.
-        if (!$nfe = R::findOne('nfe', 'chave = ?', [ $chave ])) {
+        if (!$nfe = R::findOne('nfe', 'chave = ?', [$chave])) {
             // ou vamos criar uma nova
             // o find_or_create deu algum problema
             $nfe = R::dispense('nfe');
@@ -110,5 +84,24 @@ class Nfes
 
         R::store($nfe);
         return $ret;
+    }
+
+    /**
+     * Verifica se um arquivo é nfe ou não
+     * pode vir qualquer arquivo mas anteriormente foi filtrado para vir somente com extensão xml
+     * @param object $anexo É um objeto de PhpMimeMailParser\Parser;
+     * @return array Retorna os dados da sefaz ou falso se não for nfe
+     */
+    public function verificaNfe($xml)
+    {
+        //echo $xml;
+        $sefaz = $this->sefaz->consultaXML($xml);
+        //print_r($sefaz);
+        if ($sefaz['status'] == 'ok') { // sim é uma nfe
+            $ret['sefaz'] = $sefaz;
+            $ret['xml'] = $xml;
+            return $ret;
+        }
+        return false;
     }
 }
