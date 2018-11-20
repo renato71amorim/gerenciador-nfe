@@ -7,16 +7,30 @@ class Popper
 {
     public $debug = false; //se true gera log interno
 
+    // instância da nfe
+    protected $nfe;
+    protected $parser;
+
     public function __construct($cfg)
     {
         $this->imap = $cfg['imap'];
-        $this->nfews = $cfg['nfews'];
+        //$this->nfews = $cfg['nfews'];
         $this->logfile = $cfg['logfile'];
     }
 
+    public function setNfe($nfe)
+    {
+        $this->nfe = $nfe;
+    }
+
+    public function setParser($parser)
+    {
+        $this->parser = $parser;
+    }
+
     /**
-     * getUnidade 
-     * 
+     * getUnidade
+     *
      * Retorna a unidade USP associada ao email de nfe
      *
      * Regra:
@@ -40,7 +54,7 @@ class Popper
         // depois verifica o subject
         $subject = iconv_mime_decode($header->subject, 0, 'UTF-8');
         preg_match('/\b[^\s]+@[^\s]+/', $subject, $email_candidate);
-        if ($email = filter_var($email_candidate,FILTER_VALIDATE_EMAIL)){
+        if ($email = filter_var($email_candidate, FILTER_VALIDATE_EMAIL)) {
             if ($unidade = Unidade::getUnidadeByEmailNfe($email)) {
                 return $unidade;
             }
@@ -53,7 +67,7 @@ class Popper
                 return $unidade;
             }
         }
-        
+
         // pelo CC
         foreach ($header->cc as $src) {
             $cc = strtolower($src->mailbox . '@' . $src->host);
@@ -134,6 +148,7 @@ class Popper
         $emails = $this->getNotParsed();
         $countEmail = count($emails);
         foreach ($emails as $email) {
+            // aqui que parseia de fato
             list($countAnexo1, $countNfeExist1, $countNfeNovo1) = $this->parseEmail($email);
             $countAnexo += $countAnexo1;
             $countNfeExist += $countNfeExist1;
@@ -161,6 +176,10 @@ class Popper
      */
     public function parseEmail($email)
     {
+        if (empty($this->nfe)) {
+            die('Nfe não inicializado em parseEmail');
+        }
+
         $countNfeExist = 0;
         $countNfeNovo = 0;
 
@@ -179,9 +198,11 @@ class Popper
 
             // se for um xml
             if (substr($status['anexos'][$i]['filename'], -3) == 'xml') {
-                //echo 'nfe ' . $filename;
-                if ($sefaz = $this->verificaNfe($anexo)) { // se for nfe
-                    $salvo = $this->salvaNFE($sefaz, $email); // salva no bd
+                print_r($status['anexos'][$i]);
+                $xml = $anexo->getContent();
+                //echo $xml;
+                if ($sefaz = $this->nfe->verificaNfe($xml)) { // se for nfe
+                    $salvo = $this->nfe->salvaNFE($sefaz, $email); // salva no bd
                     $status['anexos'][$i]['parser'] = 'nfe';
                     if ($salvo == 'novo') {
                         $countNfeNovo++;
@@ -278,106 +299,21 @@ class Popper
      */
     public function getAnexos($email)
     {
-        $parser = new \PhpMimeMailParser\Parser();
-        $parser->setText($email->raw_header . utf8_decode($email->raw_body));
+        //$parser = new \PhpMimeMailParser\Parser();
+        $this->parser->setText($email->raw_header . utf8_decode($email->raw_body));
 
         // Pass in a writeable path to save attachments
         $anexo_dir = sys_get_temp_dir() . '/'; // Be sure to include the trailing slash
         $include_inline = true; // Optional argument to include inline attachments (default: true)
-        $parser->saveattachments($anexo_dir, [$include_inline]);
+        $this->parser->saveattachments($anexo_dir, [$include_inline]);
 
         // Get an array of anexoment items from $Parser
-        $attachments = $parser->getattachments([$include_inline]);
+        $attachments = $this->parser->getattachments([$include_inline]);
 
         return $attachments;
     }
 
     // vamos separar aqui
-
-    /**
-     * Verifica se um arquivo é nfe ou não
-     * pode vir qualquer arquivo mas anteriormente foi filtrado para vir somente com extensão xml
-     * @param object $anexo É um objeto de PhpMimeMailParser\Parser;
-     * @return array Retorna os dados da sefaz ou falso se não for nfe
-     */
-    public function verificaNfe($anexo)
-    {
-        $arq_xml = $anexo->getContent();
-        //echo $arq_xml;
-        $sefaz = $this->consulta_sefaz($arq_xml);
-        //print_r($sefaz);
-        if ($sefaz['status'] == 'ok') { // sim é uma nfe
-            $ret['sefaz'] = $sefaz;
-            $ret['xml'] = $arq_xml;
-            return $ret;
-        }
-        return false;
-    }
-
-    public function consulta_sefaz($xml)
-    {
-        // configuração do NFE-WS está em $this->>nfews
-        // nao iremos verificar o $xml
-
-        //echo $this->nfews['srv'] . 'xml';
-        $curl = curl_init($this->nfews['srv'] . 'xml');
-        $content = 'xml=' . curl_escape($curl, $xml);
-
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_USERPWD, $this->nfews['usr'] . ":" . $this->nfews['pwd']);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/x-www-form-urlencoded; charset=UTF-8"));
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
-
-        $json_response = curl_exec($curl);
-
-        // o status serve para ajudar a debugar erros
-        //$status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-        curl_close($curl);
-
-        $response = json_decode($json_response, true);
-        return $response;
-    }
-
-    public function salvaNfe($sefaz, $email)
-    {
-        $prot = $sefaz['sefaz'];
-        $chave = $prot['chave'];
-
-        $ret = 'existente';
-        // se a nfe já existir vamos atualizar os dados pois
-        // pode ser que o xml anterior estava com problemas.
-        //  Se o novo estiver ruim então lascou-se.
-        if (!$nfe = R::findOne('nfe', 'chave = ?', [$chave])) {
-            // ou vamos criar uma nova
-            // o find_or_create deu algum problema
-            $nfe = R::dispense('nfe');
-            $ret = 'novo';
-        }
-
-        $nfe->chave = $chave;
-        $nfe->xml = $sefaz['xml'];
-
-        // todo: quando o protocolo vier com rejeicao não deve guardar. O que fazer?
-        $nfe->prot = $prot['prot']['raw']; // vamos guardar o protocolo completo
-        $nfe->emit = json_encode($prot['nfe']['emit']);
-        $nfe->dest = json_encode($prot['nfe']['dest']);
-        $nfe->ide = json_encode($prot['nfe']['ide']);
-        $nfe->sefaz = json_encode($prot['sefaz']);
-        $nfe->infadic = $prot['nfe']['infadic'];
-
-        $nfe->unidade = $email['unidade'];
-        $nfe->ano = $email['ano'];
-        //$nfe->grupo = ''; // o grupo será preservado se existir
-        $nfe->email = $email; // nfe pertence à email
-        $nfe->removed = ''; // se for removido vai voltar
-
-        R::store($nfe);
-        return $ret;
-    }
 
     /**
      * # usoDB
