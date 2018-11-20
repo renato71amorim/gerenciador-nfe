@@ -1,11 +1,18 @@
 {
   "require": {
     "gabordemooij/redbean": "^5.1",
-    "php-mime-mail-parser/php-mime-mail-parser": "^2.11"
+    "php-mime-mail-parser/php-mime-mail-parser": "^2.11",
+    "uspdev/nfe-ws-consumer": "^0.1.0"
   },
   "autoload": {
     "psr-4": {
-      "Uspdev\\Popper\\": "src"
+      "Uspdev\\Popper\\": "src/"
     }
+  },
+  "require-dev": {
+    "phpspec/phpspec": "^5.1"
+  },
+  "config": {
+    "bin-dir": "bin"
   }
 }
