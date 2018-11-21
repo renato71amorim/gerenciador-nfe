@@ -325,10 +325,11 @@ class Popper
      */
     public static function usoDB($table = 'nfeemail')
     {
+        
         $q = 'SELECT table_name AS `Table`,
               round(((data_length + index_length) / 1024 / 1024), 2) `mb`
               FROM information_schema.TABLES
-              WHERE table_schema = "delos-php"
+              WHERE table_schema = DATABASE()
               AND table_name = "' . $table . '"';
 
         $r = R::getAll($q);
