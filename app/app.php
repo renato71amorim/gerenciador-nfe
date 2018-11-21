@@ -19,3 +19,7 @@ R::setup('mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'], $db['usr'], $
 if (!R::testConnection()) {
     die('Erro de conexão no banco de dados');
 }
+
+// vamos criar a instancia popper aqui pois todos vao usar
+use \Uspdev\Popper\PopperFactory;
+$popper = PopperFactory::create($cfg);
