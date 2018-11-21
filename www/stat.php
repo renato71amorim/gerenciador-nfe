@@ -1,10 +1,6 @@
 <?php
 require '../app/app.php';
 
-use \RedBeanPHP\R as R;
-use \Uspdev\Popper\Popper;
-$popper = new Popper($cfg);
-
 echo 'Uso tabela emails ' . $popper->usoDB() . 'MB';
 echo ' <a href >Limpar</a>';
 echo '<br>';
