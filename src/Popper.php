@@ -103,7 +103,7 @@ class Popper
             // no rfc822 mesmo em branco ele retorna o array
             //$header->subject = empty($header->subject) ? '' : $header->subject;
 
-            $email = R::dispense('nfeemail');
+            $email = R::dispense('email');
 
             // de qual unidade veio esse email? A classificação
             // é com base no email de recebimento de nfe cadastrado na unidade
@@ -228,7 +228,7 @@ class Popper
 
     public function getEmail($id)
     {
-        return R::load('nfeemail', $id);
+        return R::load('email', $id);
     }
 
     public function storeEmail($email)
@@ -247,9 +247,9 @@ class Popper
      */
     public function getAll($offset = 0, $limit = 1000)
     {
-        //return R::findAll('nfeemail', ' LIMIT ' . $limit);
-        //return R::find('nfeemail','ORDER BY id DESC LIMIT '.$limit.' OFFSET '.$offset.' ;');
-        return R::getAll('SELECT id, unidade, data, ano, assunto, remet, status, raw_header FROM nfeemail  ORDER BY id DESC LIMIT ' . $limit . ' OFFSET ' . $offset . ' ;');
+        //return R::findAll('email', ' LIMIT ' . $limit);
+        //return R::find('email','ORDER BY id DESC LIMIT '.$limit.' OFFSET '.$offset.' ;');
+        return R::getAll('SELECT id, unidade, data, ano, assunto, remet, status, raw_header FROM email  ORDER BY id DESC LIMIT ' . $limit . ' OFFSET ' . $offset . ' ;');
 
         //[':limit' => $limit, ':offset' => $offset]);
     }
@@ -264,7 +264,7 @@ class Popper
      */
     public function getNotParsed($limit = 500)
     {
-        return R::find('nfeemail', ' status like ? order by id limit ?', ['%"parsed":false%', $limit]);
+        return R::find('email', ' status like ? order by id limit ?', ['%"parsed":false%', $limit]);
     }
 
     /**
@@ -320,10 +320,10 @@ class Popper
      *
      * Mostra o uso em MB de uma tabela do banco de dados.
      *
-     * @param string $table Nome da tabela a ser verificada. Default = nfeemail
+     * @param string $table Nome da tabela a ser verificada. Default = email
      * @return string Uso da tabela em MB
      */
-    public static function usoDB($table = 'nfeemail')
+    public static function usoDB($table = 'email')
     {
         
         $q = 'SELECT table_name AS `Table`,
