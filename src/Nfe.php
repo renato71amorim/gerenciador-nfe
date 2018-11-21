@@ -3,6 +3,7 @@
 namespace Uspdev\Popper;
 
 use \RedBeanPHP\R as R;
+use \Uspdev\Nfe\NfeWsConsumer;
 
 class Nfe
 {

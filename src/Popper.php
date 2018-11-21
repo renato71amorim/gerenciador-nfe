@@ -2,6 +2,7 @@
 namespace Uspdev\Popper;
 
 use \RedBeanPHP\R as R;
+use \PhpMimeMailParser\Parser;
 
 class Popper
 {
