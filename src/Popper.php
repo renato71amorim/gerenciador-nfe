@@ -18,12 +18,12 @@ class Popper
         $this->logfile = $cfg['logfile'];
     }
 
-    public function setNfe($nfe)
+    public function setNfe(Nfe $nfe)
     {
         $this->nfe = $nfe;
     }
 
-    public function setParser($parser)
+    public function setParser(Parser $parser)
     {
         $this->parser = $parser;
     }
@@ -198,7 +198,6 @@ class Popper
 
             // se for um xml
             if (substr($status['anexos'][$i]['filename'], -3) == 'xml') {
-                print_r($status['anexos'][$i]);
                 $xml = $anexo->getContent();
                 //echo $xml;
                 if ($sefaz = $this->nfe->verificaNfe($xml)) { // se for nfe

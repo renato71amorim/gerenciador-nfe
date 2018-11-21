@@ -15,7 +15,7 @@ class Nfe
         $this->logfile = $cfg['logfile'];
     }
 
-    public function setSefaz($sefaz)
+    public function setSefaz(NfeWsConsumer $sefaz)
     {
         $this->sefaz = $sefaz;
     }
