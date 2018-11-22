@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "gabordemooij/redbean",
-            "version": "v5.1",
+            "version": "v5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gabordemooij/redbean.git",
-                "reference": "a02e58ad5519149f572559a8293b5dffea385956"
+                "reference": "4ec3ee400bfbe4c52da4a376de9a6c338b5a8819"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/a02e58ad5519149f572559a8293b5dffea385956",
-                "reference": "a02e58ad5519149f572559a8293b5dffea385956",
+                "url": "https://api.github.com/repos/gabordemooij/redbean/zipball/4ec3ee400bfbe4c52da4a376de9a6c338b5a8819",
+                "reference": "4ec3ee400bfbe4c52da4a376de9a6c338b5a8819",
                 "shasum": ""
             },
             "require": {
@@ -31,7 +31,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "New BSD and GPLv2"
+                "BSD-3-Clause"
             ],
             "authors": [
                 {
@@ -45,7 +45,7 @@
             "keywords": [
                 "orm"
             ],
-            "time": "2018-04-01T11:51:37+00:00"
+            "time": "2018-10-26T09:06:03+00:00"
         },
         {
             "name": "php-mime-mail-parser/php-mime-mail-parser",
@@ -129,16 +129,16 @@
         },
         {
             "name": "uspdev/nfe-ws-consumer",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/uspdev/nfe-ws-consumer.git",
-                "reference": "1609fa5d41c0cfb84b802ed57974866fbdb37716"
+                "reference": "8c4f80e7444c76f329a4d8e95c55859a250afe80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/uspdev/nfe-ws-consumer/zipball/1609fa5d41c0cfb84b802ed57974866fbdb37716",
-                "reference": "1609fa5d41c0cfb84b802ed57974866fbdb37716",
+                "url": "https://api.github.com/repos/uspdev/nfe-ws-consumer/zipball/8c4f80e7444c76f329a4d8e95c55859a250afe80",
+                "reference": "8c4f80e7444c76f329a4d8e95c55859a250afe80",
                 "shasum": ""
             },
             "require": {
@@ -165,7 +165,7 @@
                 }
             ],
             "description": "API para consumir dados de uspdev/nfe-ws",
-            "time": "2018-11-20T13:32:34+00:00"
+            "time": "2018-11-20T16:27:46+00:00"
         }
     ],
     "packages-dev": [
