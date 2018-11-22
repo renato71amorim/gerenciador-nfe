@@ -1,11 +1,6 @@
 <?php
 require '../app/app.php';
 
-#use \RedBeanPHP\R as R;
-use \Uspdev\Popper\PopperFactory;
-
-$popper = PopperFactory::create($cfg);
-
 $id = $_GET['id'];
 
 $email = $popper->getEmail($id);
