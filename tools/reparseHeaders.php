@@ -4,6 +4,8 @@ require '../app/app.php';
 use \Uspdev\Popper\Popper;
 $popper = new Popper($cfg);
 
+// foi usado para corrigir unidades que vieram como null por erro no código
+
 //$emails = $popper->getAll();
 use \RedBeanPHP\R as R;
 $emails = R::exec("SELECT id, unidade, raw_header FROM nfeemail WHERE unidade='NONE' ORDER BY id DESC;");
