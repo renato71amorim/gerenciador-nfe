@@ -1,8 +1,6 @@
 <?php
 require '../app/app.php';
 
-//$popper = new Popper($cfg);
-
 ?>
 <!DOCTYPE html>
 <html>
