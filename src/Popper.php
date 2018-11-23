@@ -1,8 +1,8 @@
 <?php
 namespace Uspdev\Popper;
 
-use \RedBeanPHP\R as R;
 use \PhpMimeMailParser\Parser;
+use \RedBeanPHP\R as R;
 
 class Popper
 {
@@ -53,27 +53,34 @@ class Popper
         }
 
         // depois verifica o subject
-        $subject = iconv_mime_decode($header->subject, 0, 'UTF-8');
-        preg_match('/\b[^\s]+@[^\s]+/', $subject, $email_candidate);
-        if ($email = filter_var($email_candidate, FILTER_VALIDATE_EMAIL)) {
-            if ($unidade = Unidade::getUnidadeByEmailNfe($email)) {
-                return $unidade;
+        if (!empty($header->subject)) {
+            //$subject = iconv_mime_decode($header->subject, 0, 'UTF-8');
+            $subject = mb_decode_mimeheader($header->subject);
+            preg_match('/\b[^\s]+@[^\s]+/', $subject, $email_candidate);
+            if ($email = filter_var($email_candidate, FILTER_VALIDATE_EMAIL)) {
+                if ($unidade = Unidade::getUnidadeByEmailNfe($email)) {
+                    return $unidade;
+                }
             }
         }
 
         // pelo To
-        foreach ($header->to as $src) {
-            $to = strtolower($src->mailbox . '@' . $src->host);
-            if ($unidade = Unidade::getUnidadeByEmailNfe($to)) {
-                return $unidade;
+        if (!empty($header->to)) {
+            foreach ($header->to as $src) {
+                $to = strtolower($src->mailbox . '@' . $src->host);
+                if ($unidade = Unidade::getUnidadeByEmailNfe($to)) {
+                    return $unidade;
+                }
             }
         }
 
         // pelo CC
-        foreach ($header->cc as $src) {
-            $cc = strtolower($src->mailbox . '@' . $src->host);
-            if ($unidade = Unidade::getUnidadeByEmailNfe($cc)) {
-                return $unidade;
+        if (!empty($header->cc)) {
+            foreach ($header->cc as $src) {
+                $cc = strtolower($src->mailbox . '@' . $src->host);
+                if ($unidade = Unidade::getUnidadeByEmailNfe($cc)) {
+                    return $unidade;
+                }
             }
         }
 
@@ -255,6 +262,22 @@ class Popper
     }
 
     /**
+     * findCollectionByYear
+     *
+     * @param  mixed $year
+     *
+     * se não for passado $year então será atribuído o ano corrente
+     * Retorna todos os emails do ano correspondente
+     *
+     * @return Collection de emails do ano correspondente
+     */
+    public function findCollectionByYear($year = '')
+    {
+        $year = empty($year) ? date('Y') : $year;
+        return R::findCollection('email', 'ano = ? ORDER BY id DESC ', [$year]);
+    }
+
+    /**
      * getNotParsed
      * Busca no banco de dados os emails não parseados. No processo primeiro os emails são baixados e depois parseados.
      *
@@ -325,7 +348,7 @@ class Popper
      */
     public static function usoDB($table = 'email')
     {
-        
+
         $q = 'SELECT table_name AS `Table`,
               round(((data_length + index_length) / 1024 / 1024), 2) `mb`
               FROM information_schema.TABLES
