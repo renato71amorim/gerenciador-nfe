@@ -42,7 +42,7 @@ class Nfe
     }
 
     /**
-     * salvaNfe Salva um xml de nfe no banco de dados
+     * store Salva um xml de nfe no banco de dados
      *
      * @param  array $sefaz Retorno da colsulta à sefaz
      * @param  object $email Objeto do email associado à nfe
@@ -50,7 +50,7 @@ class Nfe
      * @return string retorna 'existente' se já existe no BD e atualizou
      *                retorna 'novo' se adicionado ao bd
      */
-    public function salvaNfe($sefaz, $email)
+    public function store($sefaz, $email)
     {
         $prot = $sefaz['sefaz'];
         $chave = $prot['chave'];

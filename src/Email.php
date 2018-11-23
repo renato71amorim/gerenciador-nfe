@@ -209,7 +209,7 @@ class Email
                 $xml = $anexo->getContent();
                 //echo $xml;
                 if ($sefaz = $this->nfe->verificaNfe($xml)) { // se for nfe
-                    $salvo = $this->nfe->salvaNFE($sefaz, $email); // salva no bd
+                    $salvo = $this->nfe->store($sefaz, $email); // salva no bd
                     $status['anexos'][$i]['parser'] = 'nfe';
                     if ($salvo == 'novo') {
                         $countNfeNovo++;
