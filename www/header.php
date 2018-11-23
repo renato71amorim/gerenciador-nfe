@@ -3,7 +3,7 @@ require '../app/app.php';
 
 $id = $_GET['id'];
 
-$email = $popper->getEmail($id);
+$email = $popper->load($id);
 
 // vamos imprimir as coisas na tela
 echo 'id ' . $id . '<br>';

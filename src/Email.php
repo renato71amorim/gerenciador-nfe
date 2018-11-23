@@ -233,7 +233,7 @@ class Email
         return [$countAnexo, $countNfeExist, $countNfeNovo];
     }
 
-    public function getEmail($id)
+    public function load($id)
     {
         return R::load('email', $id);
     }
