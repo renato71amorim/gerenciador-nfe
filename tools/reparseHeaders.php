@@ -18,7 +18,7 @@ while ($email = $emails->next()) {
     if ($unidade != $email->unidade) {
         echo 'id: ' . $email->id . ';';
         $email->unidade = $unidade;
-        $popper->storeEmail($email);
+        $popper->store($email);
         $ret = $popper->parseEmail($email);
         echo 'Parser: ' . json_encode($ret) . PHP_EOL;
         echo 'Unidade alterada email_id ' . $email->id . PHP_EOL;

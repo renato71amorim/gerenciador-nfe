@@ -130,7 +130,7 @@ class Email
             $status['anexos'] = [];
             $email['status'] = json_encode($status);
 
-            $ids[$i] = R::store($email);
+            $ids[$i] = $this->store($email);
         }
         if ($this->debug) {
             $this->log('Novos emails: ' . $count);
@@ -228,7 +228,7 @@ class Email
         $status['parsed'] = true;
         $status['parsedate'] = date("Y-m-d H:i:s");
         $email->status = json_encode($status);
-        R::store($email);
+        $this->store($email);
 
         return [$countAnexo, $countNfeExist, $countNfeNovo];
     }
@@ -238,7 +238,7 @@ class Email
         return R::load('email', $id);
     }
 
-    public function storeEmail($email)
+    public function store($email)
     {
         return R::store($email);
     }
