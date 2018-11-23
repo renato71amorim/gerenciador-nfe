@@ -4,7 +4,7 @@ namespace Uspdev\GerenciadorNfe;
 use \PhpMimeMailParser\Parser;
 use \RedBeanPHP\R as R;
 
-class Popper
+class Email
 {
     public $debug = false; //se true gera log interno
 
