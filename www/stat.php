@@ -5,14 +5,12 @@ echo 'Uso tabela emails ' . $popper->usoDB() . 'MB';
 echo ' <a href >Limpar</a>';
 echo '<br>';
 
-$emails = $popper->getAll();
-
-//$emails = R::getAll('SELECT id, unidade, data, ano, assunto, remet, status, raw_header FROM nfeemail  ORDER BY id DESC;');
+$emails = $popper->findCollectionByYear();
 
 echo 'Emails<br>';
 echo 'Total: ' . count($emails) . '<br>';
 
-foreach ($emails as $email) {
+while ($email = $emails->next()) {
     $status = json_decode($email['status'], true);
     echo $email['id'] . ' - ' . $email['unidade'] . ' - ' . $status['fetchdate'] . ' - Anexos: ' . count($status['anexos']);
     echo ' - Assunto: ' . $email['assunto'];
@@ -21,4 +19,4 @@ foreach ($emails as $email) {
     echo '<br>';
 }
 
-unset($emails);
+//unset($emails);
