@@ -8,17 +8,13 @@ require '../app/app.php';
 
 // foi usado para corrigir unidades que vieram como null por erro no código
 
-// aqui não usamos o popper paraque o redbean possa não trazer o raw_body
-// que é grande e estoura a memória
-//$emails = R::exec("SELECT id, unidade, raw_header FROM nfeemail WHERE unidade='NONE' ORDER BY id DESC;");
-
 $emails = $popper->findCollectionByYear();
 
 echo 'inicio' . PHP_EOL;
 while ($email = $emails->next()) {
     $header = imap_rfc822_parse_headers($email->raw_header);
     $unidade = $popper->getUnidade($header);
-    
+
     if ($unidade != $email->unidade) {
         echo 'id: ' . $email->id . ';';
         $email->unidade = $unidade;
@@ -29,5 +25,4 @@ while ($email = $emails->next()) {
     }
 }
 
-echo 'fim';
-unset($emails);
+echo 'fim' . PHP_EOL;
