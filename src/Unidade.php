@@ -1,5 +1,5 @@
 <?php
-namespace Uspdev\Popper;
+namespace Uspdev\GerenciadorNfe;
 
 class Unidade
 {

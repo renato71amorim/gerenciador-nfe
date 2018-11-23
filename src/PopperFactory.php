@@ -1,9 +1,9 @@
 <?php
-namespace Uspdev\Popper;
+namespace Uspdev\GerenciadorNfe;
 
 use \Uspdev\Nfe\NfeWsConsumer;
-use \Uspdev\Popper\Nfe;
-use \Uspdev\Popper\Popper;
+use \Uspdev\GerenciadorNfe\Nfe;
+use \Uspdev\GerenciadorNfe\GerenciadorNfe;
 use \PhpMimeMailParser\Parser;
 
 class PopperFactory

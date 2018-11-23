@@ -1,5 +1,5 @@
 <?php
-namespace Uspdev\Popper;
+namespace Uspdev\GerenciadorNfe;
 
 use \PhpMimeMailParser\Parser;
 use \RedBeanPHP\R as R;

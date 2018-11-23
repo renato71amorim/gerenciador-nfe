@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspdev\Popper;
+namespace Uspdev\GerenciadorNfe;
 
 use \RedBeanPHP\R as R;
 use \Uspdev\Nfe\NfeWsConsumer;

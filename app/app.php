@@ -21,5 +21,5 @@ if (!R::testConnection()) {
 }
 
 // vamos criar a instancia popper aqui pois todos vao usar
-use \Uspdev\Popper\PopperFactory;
+use \Uspdev\GerenciadorNfe\PopperFactory;
 $popper = PopperFactory::create($cfg);

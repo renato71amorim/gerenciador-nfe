@@ -8,7 +8,7 @@ echo '<br>';
 $emails = $popper->findCollectionByYear();
 
 echo 'Emails<br>';
-echo 'Total: ' . count($emails) . '<br>';
+//echo 'Total: ' . count($emails) . '<br>';
 
 while ($email = $emails->next()) {
     $status = json_decode($email['status'], true);
