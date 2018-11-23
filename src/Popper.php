@@ -88,13 +88,13 @@ class Popper
     }
 
     /**
-     * downloadEmails
+     * popNow
      *
      * Baixa todos os emails do servidor pop e guarda no banco de dados
      *
      * @return array Ids dos emails baixados
      */
-    public function downloadEmails()
+    public function popNow()
     {
         // emails baixados novos ficam com parsed == false
         $inbox = imap_open($this->imap['host'], $this->imap['usr'], $this->imap['pwd']) or die('Cannot connect to Gmail: ' . imap_last_error());
@@ -141,12 +141,12 @@ class Popper
     }
 
     /**
-     * parseNewEmails
+     * parseNew
      * Recupera emails do BD com status 'not parsed' e parseia
      *
      * @return array Contem dados dos emails parseados
      */
-    public function parseNewEmails()
+    public function parseNew()
     {
         $ret = [];
         $countNfeExist = 0;
