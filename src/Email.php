@@ -272,7 +272,7 @@ class Email
     public function findCollectionByYear($year = '')
     {
         $year = empty($year) ? date('Y') : $year;
-        return R::findCollection('email', 'ano = ? ORDER BY id DESC ', [$year]);
+        return Database::findCollection('email', 'ano = ? ORDER BY id DESC ', [$year]);
     }
 
     /**
@@ -344,17 +344,14 @@ class Email
      * @param string $table Nome da tabela a ser verificada. Default = email
      * @return string Uso da tabela em MB
      */
-    public static function usoDB($table = 'email')
+    public static function usoDB()
     {
+        return Database::uso('email');
+    }
 
-        $q = 'SELECT table_name AS `Table`,
-              round(((data_length + index_length) / 1024 / 1024), 2) `mb`
-              FROM information_schema.TABLES
-              WHERE table_schema = DATABASE()
-              AND table_name = "' . $table . '"';
-
-        $r = R::getAll($q);
-        return $r[0]['mb'];
+    public static function anos()
+    {
+        return Database::anos('email');
     }
 
     /**
@@ -371,9 +368,12 @@ class Email
     public static function ajustaDataEmail($date)
     {
         if (strpos($date, '(') > 0) {
+            // corrigir um (-3) no final da strin
             return substr($date, 0, strpos($date, '('));
-        } else {
-            return $date;
+        } else if (strpos($date, 'UT') > 0) {
+            // corrige UT no final. Ex. Wed, 21 Nov 2018 16:10:54 UT
+            return substr($date, 0, strpos($date, 'UT'));
         }
+        return $date;
     }
 }
