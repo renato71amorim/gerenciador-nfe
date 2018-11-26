@@ -242,24 +242,6 @@ class Email
     }
 
     /**
-     * getAll
-     * Retorna todos os emails limitados a $limit. Não retorna o raw_body pois irá exaurir a memória.
-     *
-     * @param  int $offset
-     * @param  int $limit
-     *
-     * @return array Array do BD com os emails
-     */
-    public function getAll($offset = 0, $limit = 1000)
-    {
-        //return R::findAll('email', ' LIMIT ' . $limit);
-        //return R::find('email','ORDER BY id DESC LIMIT '.$limit.' OFFSET '.$offset.' ;');
-        return R::getAll('SELECT id, unidade, data, ano, assunto, remet, status, raw_header FROM email  ORDER BY id DESC LIMIT ' . $limit . ' OFFSET ' . $offset . ' ;');
-
-        //[':limit' => $limit, ':offset' => $offset]);
-    }
-
-    /**
      * findCollectionByYear
      *
      * @param  mixed $year
@@ -285,7 +267,7 @@ class Email
      */
     public function getNotParsed($limit = 500)
     {
-        return R::find('email', ' status like ? order by id limit ?', ['%"parsed":false%', $limit]);
+        return Database::find('email', ' status like ? order by id limit ?', ['%"parsed":false%', $limit]);
     }
 
     /**
