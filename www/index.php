@@ -14,7 +14,8 @@ require '../app/app.php';
 </head>
 <body>
 <a href="pop.php">Verificar novos emails agora</a> |
-<a href="stat.php">Emails</a> |
+<a href="emails.php">Emails</a> |
+<a href="nfes.php">NFEs</a>
 
 <pre><?php
 $log = passthru('tac ../log/popper.log');
