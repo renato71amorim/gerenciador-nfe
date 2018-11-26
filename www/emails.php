@@ -1,18 +1,16 @@
 <?php
 require '../app/app.php';
 
-echo 'Uso tabela emails ' . $popper->usoDB() . 'MB |';
-echo ' <a href >Limpar</a>';
-echo '<br>';
-echo 'Anos: ';
-$anos = $popper->anos();
-foreach ($anos as $ano) {
+echo 'Uso tabela emails ' . $popper->usoDB() . 'MB';
+#echo '<br>';
+echo ' | Anos: ';
+foreach ($popper->anos() as $ano) {
     echo '<a href=?ano=' . $ano . '>' . $ano . '</a> | ';
 }
 echo '<br>';
 echo '<br>';
 
-$ano = $_GET['ano'] ? $_GET['ano'] : '';
+$ano = $_GET['ano'] ? $_GET['ano'] : date('Y');
 
 $emails = $popper->findCollectionByYear($ano);
 
