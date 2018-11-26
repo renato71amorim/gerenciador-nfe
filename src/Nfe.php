@@ -59,10 +59,10 @@ class Nfe
         // se a nfe já existir vamos atualizar os dados pois
         // pode ser que o xml anterior estava com problemas.
         //  Se o novo estiver ruim então lascou-se.
-        if (!$nfe = R::findOne('nfe', 'chave = ?', [$chave])) {
+        if (!$nfe = Database::findOne('nfe', 'chave = ?', [$chave])) {
             // ou vamos criar uma nova
             // o find_or_create deu algum problema
-            $nfe = R::dispense('nfe');
+            $nfe = Database::dispense('nfe');
             $ret = 'novo';
         }
 
@@ -83,7 +83,7 @@ class Nfe
         $nfe->email = $email; // nfe pertence à email
         $nfe->removed = ''; // se for removido vai voltar
 
-        R::store($nfe);
+        Database::store($nfe);
         return $ret;
     }
 

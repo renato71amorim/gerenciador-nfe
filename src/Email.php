@@ -6,11 +6,14 @@ use \RedBeanPHP\R as R;
 
 class Email
 {
+    //use Database;
+
     public $debug = false; //se true gera log interno
 
     // instância da nfe
     protected $nfe;
     protected $parser;
+    const tbl = 'email';
 
     public function __construct($cfg)
     {
@@ -110,7 +113,7 @@ class Email
             // no rfc822 mesmo em branco ele retorna o array
             //$header->subject = empty($header->subject) ? '' : $header->subject;
 
-            $email = R::dispense('email');
+            $email = Database::dispense(self::tbl);
 
             // de qual unidade veio esse email? A classificação
             // é com base no email de recebimento de nfe cadastrado na unidade
@@ -130,7 +133,7 @@ class Email
             $status['anexos'] = [];
             $email['status'] = json_encode($status);
 
-            $ids[$i] = $this->store($email);
+            $ids[$i] = Database::store($email);
         }
         if ($this->debug) {
             $this->log('Novos emails: ' . $count);
@@ -228,19 +231,14 @@ class Email
         $status['parsed'] = true;
         $status['parsedate'] = date("Y-m-d H:i:s");
         $email->status = json_encode($status);
-        $this->store($email);
+        Database::store($email);
 
         return [$countAnexo, $countNfeExist, $countNfeNovo];
     }
 
     public function load($id)
     {
-        return R::load('email', $id);
-    }
-
-    public function store($email)
-    {
-        return R::store($email);
+        return Database::load('email', $id);
     }
 
     /**
