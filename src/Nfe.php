@@ -105,4 +105,22 @@ class Nfe
         }
         return false;
     }
+
+    /**
+     * # usoDB
+     *
+     * Mostra o uso em MB de uma tabela do banco de dados.
+     *
+     * @param string $table Nome da tabela a ser verificada. Default = email
+     * @return string Uso da tabela em MB
+     */
+    public static function usoDB()
+    {
+        return Database::uso('nfe');
+    }
+
+    public static function anos()
+    {
+        return Database::anos('nfe');
+    }
 }
