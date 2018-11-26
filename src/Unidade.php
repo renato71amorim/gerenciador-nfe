@@ -29,7 +29,7 @@ class Unidade
      *
      * @return varchar Sigla da unidade procurada ou false se não encontrar
      */
-    public function getUnidadeByEmailNfe($email)
+    public static function getUnidadeByEmailNfe($email)
     {
         $unidades = Unidade::getUnidades();
         foreach ($unidades as $unidade) {
