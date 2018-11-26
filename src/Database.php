@@ -6,7 +6,7 @@ use \RedBeanPHP\R as R;
 class Database
 {
 
-    public static function connect($connection_string, $usr, $pwd)
+    public static function setup($connection_string, $usr, $pwd)
     {
         // vamos conectar no banco de dados
         R::setup($connection_string, $usr, $pwd);
@@ -38,6 +38,11 @@ class Database
     public static function findCollection($bean, $sql, $param)
     {
         return R::findCollection($bean, $sql, $param);
+    }
+
+    public static function find($bean, $sql, $param) 
+    {
+        return R::find($bean, $sql, $param);
     }
 
     /**
