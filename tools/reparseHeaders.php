@@ -17,9 +17,10 @@ $unidade_c = 0;
 $ano_c = 0;
 while ($email = $emails->next()) {
     $header = imap_rfc822_parse_headers($email->raw_header);
-    $unidade = $popper->getUnidade($header);
+    $unidade = $popper->getUnidadeFromHeader($header);
 
     if ($unidade != $email->unidade) {
+        // corrige se o campo unidade não foi setado corretamente
         echo 'id: ' . $email->id . ';';
         $email->unidade = $unidade;
         $popper->store($email);
@@ -33,9 +34,8 @@ while ($email = $emails->next()) {
     //$ano = date('Y', strtotime($email['data']));
     if ($email['ano'] == 1969) {
         echo $header->date;
-        $data = $popper->ajustaDataEmail($header->date);
-        echo $data;
-        $email['data'] = $data;
+        $email['data'] = $popper->ajustaDataEmail($header->date);
+        echo $email['data'];
         $email['ano'] = date('Y', strtotime($email['data']));
         \Uspdev\GerenciadorNfe\Database::store($email);
         echo 'id '. $email->id. ' - ' .$email['ano'].' - corrigido ano'.PHP_EOL;
