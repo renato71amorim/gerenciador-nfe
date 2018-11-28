@@ -40,7 +40,7 @@ class Database
         return R::findCollection($bean, $sql, $param);
     }
 
-    public static function find($bean, $sql, $param) 
+    public static function find($bean, $sql, $param)
     {
         return R::find($bean, $sql, $param);
     }
@@ -55,22 +55,21 @@ class Database
      */
     public static function uso($bean)
     {
-        $q = 'SELECT table_name AS `Table`,
-        round(((data_length + index_length) / 1024 / 1024), 2) `mb`
-        FROM information_schema.TABLES
-        WHERE table_schema = DATABASE()
-        AND table_name = "' . $bean . '"';
+        $r = R::getAll(
+            'SELECT table_name AS `Table`,
+            round(((data_length + index_length) / 1024 / 1024), 2) `mb`
+            FROM information_schema.TABLES
+            WHERE table_schema = DATABASE()
+            AND table_name = ? ',
+            [$bean]);
 
-        $r = R::getAll($q);
         return $r[0]['mb'];
     }
 
-    public static function anos($bean)
+    public static function distinct($bean, $prop)
     {
-        $q = 'SELECT DISTINCT ano from ' . $bean;
-        $r = R::getCol($q);
-        //print_r($r);exit;
-        return $r;
+        $q = 'SELECT DISTINCT ' . $prop . ' FROM ' . $bean;
+        return R::getCol($q);
     }
 
 }
