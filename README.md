@@ -19,13 +19,17 @@ Para o usuário o objetivo (não implementado ainda) é ter uma interface com a 
 
 O sistema permite receber emails de diversas unidades e classificar adequadamente criando espaços de usuários distintos para cada um.
 
-## Instalação
+## Dependências
+
+* Testado no PHP 7.0.32 (ubuntu 16.04) e no PHP 7.2 (ubuntu 18.04)
+
+* ext-imap
 
 É necessário ter o webservice nfe-ws funcional para essa aplicação funcionar adequadamente!
 
-Versão do PHP
+## Instalação
 
-* Testado no PHP 7.0.32 (ubuntu 16.04) e no PHP 7.2 (ubuntu 18.04)
+Clone o projeto do github.
 
 Instale as dependencias do composer.
 
