@@ -14,6 +14,8 @@ class Email
     protected $nfe;
     protected $parser;
     const tbl = 'email';
+    public $unidade = 'NONE';
+    public $ano = '0';
 
     public function __construct($cfg)
     {
@@ -33,7 +35,7 @@ class Email
     }
 
     /**
-     * getUnidade
+     * getUnidadeFromHeader
      *
      * Retorna a unidade USP associada ao email de nfe
      *
@@ -47,7 +49,7 @@ class Email
      * @param string $header Cabeçalho do email (raw)
      * @return string Sigla da unidade correspondente
      */
-    public function getUnidade($header)
+    public function getUnidadeFromHeader($header)
     {
         // verifica pelo from
         $from = $header->from[0]->mailbox . '@' . $header->from[0]->host;
@@ -117,7 +119,7 @@ class Email
 
             // de qual unidade veio esse email? A classificação
             // é com base no email de recebimento de nfe cadastrado na unidade
-            $email['unidade'] = $this->getUnidade($header);
+            $email['unidade'] = $this->getUnidadeFromHeader($header);
 
             $email['data'] = $this->ajustaDataEmail($header->date);
             $email['ano'] = date('Y', strtotime($email['data']));
@@ -254,7 +256,12 @@ class Email
     public function findCollectionByYear($year = '')
     {
         $year = empty($year) ? date('Y') : $year;
-        return Database::findCollection('email', 'ano = ? ORDER BY id DESC ', [$year]);
+        return Database::findCollection('email', '(ano LIKE ?) and (unidade LIKE ?) ORDER BY id DESC ', [$year, $this->unidade]);
+    }
+
+    public function findCollection()
+    {
+        return Database::findCollection('email', '(ano LIKE ?) and (unidade LIKE ?) ORDER BY id DESC ', [$this->ano, $this->unidade]);
     }
 
     /**
@@ -333,7 +340,12 @@ class Email
 
     public static function anos()
     {
-        return Database::anos('email');
+        return Database::distinct('email', 'ano');
+    }
+
+    public static function unidades()
+    {
+        return Database::distinct('email', 'unidade');
     }
 
     /**
@@ -343,19 +355,22 @@ class Email
      * o "(-3)" a mais não permite parsear corretamente.
      * Esta função verifica a presença desse adendo e elimina
      *
+     * Alguns emails vem no formato "Wed, 21 Nov 2018 16:10:54 UT"
+     * Elimina o "UT" final
+     *
      * @param  string $date Data que veio do cabeçalho do email
      *
      * @return string Data ajustada
      */
     public static function ajustaDataEmail($date)
     {
-        if (strpos($date, '(') > 0) {
-            // corrigir um (-3) no final da strin
+        if (strpos($date, '(') > 0) { // corrige o (-3) no final
             return substr($date, 0, strpos($date, '('));
-        } else if (strpos($date, 'UT') > 0) {
-            // corrige UT no final. Ex. Wed, 21 Nov 2018 16:10:54 UT
+
+        } else if (strpos($date, 'UT') > 0) { // corrige UT no final.
             return substr($date, 0, strpos($date, 'UT'));
         }
+        // se estiver tudo bem não faz nada
         return $date;
     }
 }
