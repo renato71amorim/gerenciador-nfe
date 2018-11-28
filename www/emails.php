@@ -1,20 +1,31 @@
 <?php
 require '../app/app.php';
 
-echo 'Uso tabela emails ' . $popper->usoDB() . 'MB';
+echo 'Uso tabela email ' . $popper->usoDB() . 'MB';
 #echo '<br>';
 echo ' | Anos: ';
 foreach ($popper->anos() as $ano) {
     echo '<a href=?ano=' . $ano . '>' . $ano . '</a> | ';
 }
+#echo '<br>';
+
+echo ' | Unidades: ';
+foreach ($popper->unidades() as $u) {
+    echo '<a href=?ano=' . $u . '>' . $u . '</a> | ';
+}
 echo '<br>';
+
 echo '<br>';
 
-$ano = $_GET['ano'] ? $_GET['ano'] : date('Y');
+$ano = empty($_GET['ano']) ? date('Y') : $_GET['ano'];
 
-$emails = $popper->findCollectionByYear($ano);
+$popper->unidade = '%';
+$popper->ano = '%';
+$emails = $popper->findCollection($ano);
 
-echo 'Emails do ano de ' . $ano . '<br>';
+echo 'Filtros: Unidade: '.$popper->unidade;
+
+echo ' | Ano: ' . $popper->ano . '<br>';
 //echo 'Total: ' . count($emails) . '<br>';
 
 while ($email = $emails->next()) {
