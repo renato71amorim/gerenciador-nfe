@@ -14,6 +14,8 @@ if ('cli' != PHP_SAPI) {
 
 require '../app/app.php';
 use \Uspdev\GerenciadorNfe\Database;
+// aqui vai ter problema se o banco for grande de mais
+// de estouro de memoria
 $nfes = Database::findAll('nfe');
 
 $c_ok = 0;
@@ -35,6 +37,7 @@ foreach ($nfes as $nfe) {
         echo 'id ' . $dup->id . ' ' . $nfe->id . PHP_EOL;
         $c_dup++;
     } else {
+        Database::store($nfe);
         $c_ok++;
     }
 
