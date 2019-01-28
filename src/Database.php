@@ -32,7 +32,12 @@ class Database
 
     public static function findOne($bean, $sql, $param)
     {
-        return $nfe = R::findOne($bean, $sql, $param);
+        return R::findOne($bean, $sql, $param);
+    }
+
+    public static function findAll($bean, $sql = '')
+    {
+        return R::findAll($bean, $sql);
     }
 
     public static function findCollection($bean, $sql, $param)
@@ -43,6 +48,11 @@ class Database
     public static function find($bean, $sql, $param)
     {
         return R::find($bean, $sql, $param);
+    }
+
+    public static function trash($bean)
+    {
+        return R::trash($bean);
     }
 
     /**
