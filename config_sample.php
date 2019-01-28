@@ -18,6 +18,10 @@ sudo mv modules/mailparse.so /usr/lib/php/20151012/
 
 service apache2 restart
 
+# para php 7.2
+Isto se aplica para ubuntu 18.04 e para 16.04 com php 7.2 isntalado.
+O php-mail-parse é uma biblioteca do composer
+
 # instale as dependencias do composer.
 composer install
 
