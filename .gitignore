@@ -5,3 +5,6 @@ sandbox/
 phpdocs/
 composer.phar
 /vendor/
+
+phpspec*
+*Spec*
