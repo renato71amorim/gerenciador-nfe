@@ -5,6 +5,8 @@
 
 require '../app/app.php';
 
+use Uspdev\GerenciadorNfe\Database;
+
 $id = $_GET['id'];
 
 $email = $popper->load($id);
