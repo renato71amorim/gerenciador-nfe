@@ -11,6 +11,7 @@ class Unidade
     public static function getUnidades()
     {
         $unidades = [];
+        $unidades[0]['id'] = 1;
         $unidades[0]['sigla'] = 'EESC';
         $unidades[0]['email_nfe'] = 'nfe@eesc.usp.br';
 
