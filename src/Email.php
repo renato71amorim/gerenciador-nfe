@@ -92,6 +92,18 @@ class Email
         return 'NONE';
     }
 
+    public function getUnidadeFromHeader2($raw_header)
+    {
+        $unidades = Unidade::getUnidades();
+        foreach ($unidades as $unidade) {
+            if (stripos($raw_header, ' ' . $unidade['email_nfe']) !== false) {
+                // o espaço em branco ajuda a delimitar o email
+                return $unidade['sigla'];
+            }
+        }
+        return 'NONE';
+    }
+
     /**
      * popNow
      *
@@ -108,7 +120,8 @@ class Email
         $count = imap_num_msg($inbox);
         for ($i = 1; $i <= $count; $i++) {
             //$header = imap_headerinfo($inbox, $i);
-            $header = imap_rfc822_parse_headers(imap_fetchheader($inbox, $i, FT_PREFETCHTEXT));
+            $raw_header = imap_fetchheader($inbox, $i, FT_PREFETCHTEXT);
+            $header = imap_rfc822_parse_headers($raw_header);
             //print_r($header);
 
             // se subject estiver em branco ele vem indefinido. Vamos popular com vazio.
@@ -119,13 +132,13 @@ class Email
 
             // de qual unidade veio esse email? A classificação
             // é com base no email de recebimento de nfe cadastrado na unidade
-            $email['unidade'] = $this->getUnidadeFromHeader($header);
+            $email['unidade'] = $this->getUnidadeFromHeader2($raw_header);
 
             $email['data'] = $this->ajustaDataEmail($header->date);
             $email['ano'] = date('Y', strtotime($email['data']));
             $email['assunto'] = iconv_mime_decode($header->subject, 0, 'UTF-8');
             $email['remet'] = $header->from[0]->mailbox . '@' . $header->from[0]->host;
-            $email['raw_header'] = imap_fetchheader($inbox, $i, FT_PREFETCHTEXT);
+            $email['raw_header'] = $raw_header;
             $email['raw_body'] = utf8_encode(imap_body($inbox, $i));
             //$email['raw'] = imap_fetchheader($inbox, $i, FT_PREFETCHTEXT). imap_body($inbox, $i);
 
