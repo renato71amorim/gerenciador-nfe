@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d55f9c43d555a96296f869ac65b8b5e",
+    "content-hash": "5ce2c950d12c1566cb8d2842b2089eb4",
     "packages": [
         {
             "name": "gabordemooij/redbean",
