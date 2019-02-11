@@ -42,6 +42,25 @@ class Nfe
     }
 
     /**
+     * Verifica se um arquivo é nfe ou não
+     * pode vir qualquer arquivo mas anteriormente foi filtrado para vir somente com extensão xml
+     * @param object $anexo É um objeto de PhpMimeMailParser\Parser;
+     * @return array Retorna os dados da sefaz ou falso se não for nfe
+     */
+    public function verificaNfe($xml)
+    {
+        //echo $xml;
+        $sefaz = $this->sefaz->consultaXML($xml);
+        //print_r($sefaz);
+        if ($sefaz['status'] == 'ok') { // sim é uma nfe
+            $ret['sefaz'] = $sefaz;
+            $ret['xml'] = $xml;
+            return $ret;
+        }
+        return false;
+    }
+
+    /**
      * store Salva um xml de nfe no banco de dados
      *
      * @param  array $sefaz Retorno da colsulta à sefaz
@@ -50,7 +69,7 @@ class Nfe
      * @return string retorna 'existente' se já existe no BD e atualizou
      *                retorna 'novo' se adicionado ao bd
      */
-    public function store($sefaz, $email)
+    public function store($sefaz, $email = '')
     {
         $prot = $sefaz['sefaz'];
         $chave = $prot['chave'];
@@ -77,33 +96,36 @@ class Nfe
         $nfe->sefaz = json_encode($prot['sefaz']);
         $nfe->infadic = $prot['nfe']['infadic'];
 
-        $nfe->unidade = $email['unidade'];
-        $nfe->ano = $email['ano'];
+        
+
+        // vamos pegar o ano da data da NFE. 
+        // Mas tem de parsear pois está no formato abaixo com ou sem hora
+        // $date = '30/10/2018 - 16:49:36';
+        $date = $prot['nfe']['ide']['dataemi'];
+
+        $date = explode('-', $date);
+        $date = explode('/', $date[0]);
+        $date = trim($date[2]);
+
+        $nfe->ano = $date;
         //$nfe->grupo = ''; // o grupo será preservado se existir
-        $nfe->email = $email; // nfe pertence à email
+
+        // nfe pertence à email, desde que seja passado o email
+        if (!empty($email)) {
+            $nfe->unidade = $email['unidade'];
+            $nfe->email = $email;
+        } else {
+            // na importação do banco antigo não tem email então a 
+            // unidade vem junto do sefaz
+            $nfe->unidade = $sefaz['unidade'];
+        }
+
         $nfe->removed = ''; // se for removido vai voltar
+
+        //print_r($nfe);exit;
 
         Database::store($nfe);
         return $ret;
-    }
-
-    /**
-     * Verifica se um arquivo é nfe ou não
-     * pode vir qualquer arquivo mas anteriormente foi filtrado para vir somente com extensão xml
-     * @param object $anexo É um objeto de PhpMimeMailParser\Parser;
-     * @return array Retorna os dados da sefaz ou falso se não for nfe
-     */
-    public function verificaNfe($xml)
-    {
-        //echo $xml;
-        $sefaz = $this->sefaz->consultaXML($xml);
-        //print_r($sefaz);
-        if ($sefaz['status'] == 'ok') { // sim é uma nfe
-            $ret['sefaz'] = $sefaz;
-            $ret['xml'] = $xml;
-            return $ret;
-        }
-        return false;
     }
 
     /**
