@@ -96,9 +96,7 @@ class Nfe
         $nfe->sefaz = json_encode($prot['sefaz']);
         $nfe->infadic = $prot['nfe']['infadic'];
 
-        
-
-        // vamos pegar o ano da data da NFE. 
+        // vamos pegar o ano da data da NFE.
         // Mas tem de parsear pois está no formato abaixo com ou sem hora
         // $date = '30/10/2018 - 16:49:36';
         $date = $prot['nfe']['ide']['dataemi'];
@@ -115,7 +113,7 @@ class Nfe
             $nfe->unidade = $email['unidade'];
             $nfe->email = $email;
         } else {
-            // na importação do banco antigo não tem email então a 
+            // na importação do banco antigo não tem email então a
             // unidade vem junto do sefaz
             $nfe->unidade = $sefaz['unidade'];
         }
@@ -143,6 +141,16 @@ class Nfe
 
     public static function anos()
     {
-        return Database::anos('nfe');
+        return Database::distinct('nfe', 'ano');
+    }
+
+    public static function unidades()
+    {
+        return Database::distinct('nfe', 'unidade');
+    }
+
+    public function findCollection()
+    {
+        return Database::findCollection('nfe', '(ano LIKE ?) and (unidade LIKE ?) ORDER BY id DESC ', [$this->ano, $this->unidade]);
     }
 }
