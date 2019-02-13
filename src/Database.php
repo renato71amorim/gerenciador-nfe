@@ -78,7 +78,7 @@ class Database
 
     public static function distinct($bean, $prop)
     {
-        $q = 'SELECT DISTINCT ' . $prop . ' FROM ' . $bean;
+        $q = 'SELECT DISTINCT ' . $prop . ' FROM ' . $bean . ' ORDER BY ' . $prop . ' DESC';
         return R::getCol($q);
     }
 
