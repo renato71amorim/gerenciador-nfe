@@ -22,8 +22,7 @@ if (is_file('lastid.txt')) {
 }
 
 use \RedBeanPHP\R as R;
-$srv = 'http://delos2.eesc.usp.br/nfe-ws/api/';
-$nfeConsumer = new NfeWsConsumer($srv, 'delos', 'deloseesc');
+$nfeConsumer = new NfeWsConsumer($nfews['srv'], $nfews['usr'], $nfews['pwd']);
 
 //vamos conectar no BD antigo e selecionar as NFEs
 // se for removido não vamos importar
