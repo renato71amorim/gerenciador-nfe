@@ -4,26 +4,27 @@ namespace Uspdev\GerenciadorNfe;
 use \RedBeanPHP\R as R;
 
 /**
- *   manipula a tabela de config dos apps
+ * Manipula a tabela de config dos apps
+ * Para cada unidade especifica a lista de usuários com
+ * acesso, lista de admins e variáveis de configuração
  */
 
 class ConfigManager
 {
+    protected $app;
+    protected $unidade;
+    protected $currentUser = [];
+    protected $config;
 
-    public $app;
-    public $unidade;
-    public $currentUser = array();
-    public $config;
-
-    public function __construct($app, $unidade)
+    public function __construct($app, $unidade, $codpes)
     {
-        $this->unidade = $unidade;
         $this->app = $app;
-        //$this->currentUser = $user;
+        $this->unidade = $unidade;
         $this->config = $this->loadConfig();
+        $this->setCurrentUser($codpes);
     }
 
-    public function loadConfig()
+    protected function loadConfig()
     {
         if ($this->config = R::findOne('config', 'app = ? and unidade = ?',
             [$this->app, $this->unidade])) {
@@ -33,7 +34,7 @@ class ConfigManager
         return $this->config;
     }
 
-    public function newConfig()
+    protected function newConfig()
     {
         $this->config = R::dispense('config');
         $this->config->app = $this->app;
@@ -43,97 +44,123 @@ class ConfigManager
         return $this->saveConfig();
     }
 
+    protected function saveConfig()
+    {
+        return R::store($this->config);
+    }
+
+    // -------------------------------------------------
+
     public function setCurrentUser($codpes)
     {
         $this->currentUser['codpes'] = $codpes;
+        $this->currentUser['level'] = $this->getLevel();
+
+        // se não houver usuário algum o primeiro vai ser admin (level=2)
+        // isso acontece na primeira configuração somente
         if (empty(json_decode($this->config->users))) {
             $this->currentUser['level'] = 2;
             $this->addUser($codpes, 2);
-        } else {
-            $this->currentUser['level'] = $this->getLevel();
         }
         return $this->currentUser;
     }
 
+    // será que precisa disso?
     public function getCurrentUser()
     {
-        $this->currentUser['codpes'] = $codpes;
-        $this->currentUser['level'] = $this->getLevel();
-        if ($this->isUser()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->currentUser;
     }
 
-    private function lastAdmin(){
-        $users = json_decode($this->config->users, JSON_NUMERIC_CHECK);
-        $key = array_search(2, array_column($users, 'level'));
-        echo 'fechou';
-        exit;
-    }
-
+    /**
+     * getUsers Retorna a lista de usuários cadastrados
+     * Somente se é admin
+     *
+     * @return void
+     */
     public function getUsers()
     {
-        if ($this->currentUser['level'] > 0) {
+        if ($this->isAdmin()) {
             return json_decode($this->config->users, JSON_NUMERIC_CHECK);
         } else {
             return false;
         }
     }
 
-    public function getEnv()
-    {
-        return json_decode($this->config->env, JSON_NUMERIC_CHECK);
-    }
-
     public function addUser($codpes, $level = 1)
     {
-        if ($this->currentUser['level'] < 2) {
-            return false;
-        }
-        $users = json_decode($this->config->users, JSON_NUMERIC_CHECK);
-        $user = ['codpes' => $codpes, 'level' => $level];
+        if ($this->isAdmin()) {
+            $users = json_decode($this->config->users, JSON_NUMERIC_CHECK);
+            $user = ['codpes' => $codpes, 'level' => $level];
 
-        $key = array_search($codpes, array_column($users, 'codpes'));
-        if ($key === false) {
-            // usuario não está na lista
-            array_push($users, $user);
-            $this->config->users = json_encode($users, JSON_NUMERIC_CHECK);
-            $this->saveConfig();
-            return $user;
-        } else {
-            if ($users[$key]['level'] != $level) {
-                // usuário alterou o level
-                $users[$key]['level'] = $level;
+            $key = array_search($codpes, array_column($users, 'codpes'));
+            if ($key === false) {
+                // usuario não está na lista entao vamos adicionar
+                array_push($users, $user);
                 $this->config->users = json_encode($users, JSON_NUMERIC_CHECK);
                 $this->saveConfig();
-                return $users[$key];
+                return $user;
+            } else {
+                if ($users[$key]['level'] != $level) {
+                    // usuário esta na lista e alterou o level
+                    $users[$key]['level'] = $level;
+                    $this->config->users = json_encode($users, JSON_NUMERIC_CHECK);
+                    $this->saveConfig();
+                    return $users[$key];
+                }
             }
+            // se o usuario já existe e nao mudou nada
+            return $user;
+        } else {
+            return false;
         }
-
-        return true;
     }
 
     public function delUser($codpes)
     {
-        if ($this->currentUser['level'] < 2) {
+        // o usuario tem de ser admin e
+        // o usuário não pode remover a si mesmo
+        if ($this->isAdmin() and $codpes != $this->currentUser['codpes']) {
+            $users = json_decode($this->config->users, JSON_NUMERIC_CHECK);
+            $key = array_search($codpes, array_column($users, 'codpes'));
+            // se encontrou o usuario a ser removido executa a ação
+            if ($key !== false) {
+                $user = array_splice($users, $key, 1);
+                $this->config->users = json_encode($users, JSON_NUMERIC_CHECK);
+                $this->saveConfig();
+                return json_encode($user);
+            }
+        }
+        return false;
+    }
+
+    public function isAdmin()
+    {
+        return ($this->currentUser['level'] == 2) ? 1 : 0;
+    }
+
+    public function isUser()
+    {
+        return ($this->currentUser['level'] > 0) ? 1 : 0;
+    }
+
+    // -------------------------------------------
+    public function getEnv()
+    {
+        if ($this->isUser()) {
+            return json_decode($this->config->env, JSON_NUMERIC_CHECK);
+        } else {
             return false;
         }
-
-        $key = array_search($codpes, array_column($users, 'codpes'));
-        $user = array_splice($users, $key, 1);
-        $this->config->users = json_encode($users, JSON_NUMERIC_CHECK);
-        $this->saveConfig();
-
-        return json_encode($user);
     }
 
-    public function saveConfig()
+    public function setEnv(array $env)
     {
-        return R::store($this->config);
+        $this->config->env = json_encode($env);
+        $this->saveConfig();
     }
 
+    // ----------------------------------------
+    // daqui para baixo não está sendo usado
     protected function getLevel()
     {
         $users = json_decode($this->config->users, JSON_NUMERIC_CHECK);
@@ -141,29 +168,8 @@ class ConfigManager
         if ($key !== false) {
             return $users[$key]['level'];
         } else {
+            // o level 0 corresponde a usuario sem cadastro
             return 0;
-        }
-    }
-
-    public function isAdmin()
-    {
-        $users = json_decode($this->config->users, JSON_NUMERIC_CHECK);
-        $key = array_search($this->currentUser['codpes'], array_column($users, 'codpes'));
-        if ($key !== false and $users[$key]['level'] == 2) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function isUser()
-    {
-        $users = json_decode($this->config->users, JSON_NUMERIC_CHECK);
-        $key = array_search($this->currentUser['codpes'], array_column($users, 'codpes'));
-        if ($key !== false) {
-            return true;
-        } else {
-            return false;
         }
     }
 
@@ -189,24 +195,6 @@ class ConfigManager
     public function setUserProfile($profile)
     {
 
-    }
-
-    public static function acesso($app)
-    {
-        if ($_SESSION['user']['mode'] == 'admin') {
-            return 2; // se for admin global libera acesso de admin
-
-        } else { // verifica o acesso do usuario no config
-            $config = Config::getConfig($app, $_SESSION['unidade']['sigla']);
-            $users = json_decode($config->users, JSON_NUMERIC_CHECK);
-
-            foreach ($users as $user) {
-                if ($_SESSION['user']['codpes'] == $user['codpes']) {
-                    return $user['level'];
-                }
-            }
-        }
-        return false; // retorna false se não tiver acesso
     }
 
 }

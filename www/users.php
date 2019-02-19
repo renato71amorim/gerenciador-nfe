@@ -5,50 +5,51 @@ require '../app/app.php';
 
 use Uspdev\GerenciadorNfe\ConfigManager;
 
-function level()
-{
-    global $configMgr;
-    if ($configMgr->isUser()) {
-        $msg = 'é usuário ';
-    } else {
-        $msg = 'não é usuario ';
-    }
+$config = new ConfigManager('gerenciador-nfe', 'EESC', '54321');
 
-    if ($configMgr->isAdmin()) {
-        $msg .= 'é admin ';
-    } else {
-        $msg .= 'não é admin ';
-    }
-    return $msg . '<br>' . PHP_EOL;
-}
+echo 'env = ' . json_encode($config->getEnv()) . '<br>';
+$env['anos'] = [2019,2018];
 
-function users()
-{
-    global $configMgr;
-    return json_encode(
-        $configMgr->getUsers()
-    ) . '<br>' . PHP_EOL;
-}
+$config->setEnv($env);
+echo 'env = ' . json_encode($config->getEnv()) . '<br>';
 
-$configMgr = new ConfigManager('gerenciador-nfe', 'EESC');
+echo 'current user: ' . json_encode($config->getCurrentUser()) . '<br>';
+echo 'is user: ' . $config->isUser() . '<br>';
+echo 'is admin: ' . $config->isAdmin() . '<br>';
 
-echo 'current user: ' . json_encode(
-    $configMgr->setCurrentUser('54321')
-) . '<br>' . PHP_EOL;
-echo 'level: ' . level();
-echo 'users: ' . users();
+echo 'users = ' . json_encode($config->getUsers()) . '<br>';
+
+echo 'Add user = ' . json_encode($config->addUser('45678',2)) . '<br>';
+
+echo 'users = ' . json_encode($config->getUsers()) . '<br>';
+
+echo 'Del user = ' . json_encode($config->delUser('45678')) . '<br>';
+
+echo 'users = ' . json_encode($config->getUsers()) . '<br>';
+
+echo 'Del user = ' . json_encode($config->delUser('54321')) . '<br>';
+
+echo 'setCurrentUser = ' . json_encode($config->setCurrentUser('45678')) . '<BR>';
+
+echo 'is user: ' . $config->isUser() . '<br>';
+echo 'is admin: ' . $config->isAdmin() . '<br>';
+
+echo 'users = ' . json_encode($config->getUsers()) . '<br>';
+
+exit;
+
 echo 'adduser: ' . json_encode(
-    $configMgr->addUser('54321')
+    $config->addUser('54321')
 ) . '<br>' . PHP_EOL;
 
 echo 'deluser: ' . json_encode(
-    $configMgr->delUser('54321')
+    $config->delUser('54321')
 ) . '<br>' . PHP_EOL;
 
 echo '<br>' . PHP_EOL;
 
 echo 'current user: ' . json_encode(
-    $configMgr->setCurrentUser('12345')
+    $config->setCurrentUser('12345')
 ) . '<br>' . PHP_EOL;
 
 echo 'level: ' . level();
@@ -56,7 +57,7 @@ echo 'users: ' . users();
 echo '<br>' . PHP_EOL;
 
 echo 'adduser: ' . json_encode(
-    $configMgr->addUser('12345', 2)
+    $config->addUser('12345', 2)
 );
 echo '<br>' . PHP_EOL;
 
@@ -67,21 +68,21 @@ echo '<br>' . PHP_EOL;
 exit;
 
 echo 'added ' . json_encode(
-    $configMgr->addUser(12345)
+    $config->addUser(12345)
 );
 echo '<br>' . PHP_EOL;
 
 echo 'level: ' . level();
 echo '<br>' . PHP_EOL;
 
-#echo 'added '. $configMgr->addUser(12345,2);
-$users = $configMgr->getUsers();
+#echo 'added '. $config->addUser(12345,2);
+$users = $config->getUsers();
 #print_r($users);
-#echo 'deleted ' . $configMgr->delUser(12345);
-$users = $configMgr->getUsers();
+#echo 'deleted ' . $config->delUser(12345);
+$users = $config->getUsers();
 #print_r($users);
 
-$env = $configMgr->getEnv();
+$env = $config->getEnv();
 echo 'Ambiente ';
 print_r($env);
 
