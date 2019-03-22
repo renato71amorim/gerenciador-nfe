@@ -223,7 +223,7 @@ class Email
             $status['anexos'][$i]['parser'] = 'outros';
 
             // se for um xml
-            if (substr($status['anexos'][$i]['filename'], -3) == 'xml') {
+            if (strtolower(substr($status['anexos'][$i]['filename'], -3)) == 'xml') {
                 $xml = $anexo->getContent();
                 //echo $xml;
                 if ($sefaz = $this->nfe->verificaNfe($xml)) { // se for nfe
