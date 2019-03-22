@@ -74,7 +74,7 @@ class Nfe
         $prot = $sefaz['sefaz'];
         $chave = $prot['chave'];
 
-        $ret = 'existente';
+        $ret['status'] = 'existente';
         // se a nfe já existir vamos atualizar os dados pois
         // pode ser que o xml anterior estava com problemas.
         //  Se o novo estiver ruim então lascou-se.
@@ -82,7 +82,7 @@ class Nfe
             // ou vamos criar uma nova
             // o find_or_create deu algum problema
             $nfe = Database::dispense('nfe');
-            $ret = 'novo';
+            $ret['status'] = 'novo';
         }
 
         $nfe->chave = $chave;
@@ -122,7 +122,7 @@ class Nfe
 
         //print_r($nfe);exit;
 
-        Database::store($nfe);
+        $ret['id'] = Database::store($nfe);
         return $ret;
     }
 
