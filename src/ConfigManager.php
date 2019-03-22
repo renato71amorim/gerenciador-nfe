@@ -157,6 +157,7 @@ class ConfigManager
     {
         $this->config->env = json_encode($env);
         $this->saveConfig();
+        
     }
 
     // ----------------------------------------
