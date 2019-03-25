@@ -9,7 +9,6 @@ $config = new ConfigManager('gerenciador-nfe', 'EESC', '54321');
 
 echo 'env = ' . json_encode($config->getEnv()) . '<br>';
 $env['anos'] = [2019,2018];
-
 $config->setEnv($env);
 echo 'env = ' . json_encode($config->getEnv()) . '<br>';
 
