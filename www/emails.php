@@ -40,7 +40,6 @@ while ($email = $emails->next()) {
     echo $email['id'] . ' - ' . $email['unidade'] . ' - ' . $status['fetchdate'] . ' - Anexos: ' . count($status['anexos']);
     echo ' - Assunto: ' . $email['assunto'];
     echo ' - <a href="email.php?id=' . $email['id'] . '">Detalhes</a>';
-    echo ' - <a href="header.php?id=' . $email['id'] . '">Header</a>';
     echo '<br>';
 }
 
