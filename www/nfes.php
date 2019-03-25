@@ -42,6 +42,6 @@ while ($nfe = $list->next()) {
     echo $nfe['id'] . ' - ' . $nfe['unidade'] . ' - ' . $nfe['ano'];
     echo ' - ' . $ide['dataemi'] . '; no/s: ' . $ide['nro'] . '/' . $ide['serie'];
     echo '; Total: ' . $ide['total'];
-    echo '; Emit: ' . $emit['nome'];
+    echo '; Emit: <a href=nfe.php?id=' . $nfe['id'] . '>' . $emit['nome'] . '</a>';
     echo '<br>';
 }
