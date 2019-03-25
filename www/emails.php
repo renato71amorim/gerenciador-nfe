@@ -39,7 +39,7 @@ while ($email = $emails->next()) {
     $status = json_decode($email['status'], true);
     echo $email['id'] . ' - ' . $email['unidade'] . ' - ' . $status['fetchdate'] . ' - Anexos: ' . count($status['anexos']);
     echo ' - Assunto: ' . $email['assunto'];
-    echo ' - <a href="parse.php?id=' . $email['id'] . '">Parse</a>';
+    echo ' - <a href="email.php?id=' . $email['id'] . '">Detalhes</a>';
     echo ' - <a href="header.php?id=' . $email['id'] . '">Header</a>';
     echo '<br>';
 }
