@@ -60,6 +60,10 @@ class Nfe
         return false;
     }
 
+    public function load($id) {
+        return Database::load('nfe',$id);
+    }
+
     /**
      * store Salva um xml de nfe no banco de dados
      *
