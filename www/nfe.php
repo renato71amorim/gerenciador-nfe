@@ -15,26 +15,25 @@ $ide = json_decode($nfe->ide);
 ?>
 
 Unidade: <?php echo $nfe->unidade ?> |
-Ano: <?php echo $nfe->ano ?>
-<br>
-Identificação<br>
-
+Ano: <?php echo $nfe->ano ?> |
 Chave: <?php echo $nfe->chave ?><br>
-Número: <?php echo $ide->nro ?> |
-Série: <?php echo $ide->serie ?> |
-Data emi: <?php echo $ide->dataemi ?> |
-Total: <?php echo $ide->total ?><br>
 <br>
+
+Identificação<br>
+<?php echo $nfe->ide ?><br>
+<br>
+
 Emitente<br>
 <?php echo $nfe->emit ?><br>
-
 <br>
+
 Destinatário<br>
 <?php echo $nfe->dest ?><br>
-
 <br>
+
 Sefaz | <a href=>Consultar agora</a><br>
 <?php echo $nfe->sefaz ?><br>
 <br>
-Inf Adic: <br>
+
+Informações Adicionais<br>
 <?php echo $nfe->infadic ?>
