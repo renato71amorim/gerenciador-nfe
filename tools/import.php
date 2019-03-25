@@ -23,6 +23,8 @@ if (is_file('lastid.txt')) {
 
 use \RedBeanPHP\R as R;
 $nfeConsumer = new NfeWsConsumer($nfews['srv'], $nfews['usr'], $nfews['pwd']);
+$status = $nfeConsumer->status();
+echo $status;exit;
 
 //vamos conectar no BD antigo e selecionar as NFEs
 // se for removido não vamos importar
